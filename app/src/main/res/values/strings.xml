@@ -1,3 +1,12 @@
 <resources>
-    <string name="app_name">CodaiApp</string>
+<!--    <string name="app_name">CodaiApp</string>-->
+
+    <string name="title_login">Acessar sua conta</string>
+    <string name="btn_login">Entrar</string>
+    <string name="label_go_to_register">Não tem uma conta? Cadastre-se</string>
+    <!-- estes você já deve ter, mas só para garantir -->
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Senha</string>
+    <string name="app_name">CODAÍ</string>
+
 </resources>
