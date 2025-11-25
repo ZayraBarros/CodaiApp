@@ -12,19 +12,25 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CodaiApp">
 
-        <!-- Tela de Login (SEM intent-filter) -->
+
         <activity android:name=".LoginActivity" />
-        <activity android:name=".HomeActivity" />
+        <activity android:name=".MainActivity" />
+        <activity android:name=".ArticlesActivity" />
+        <activity android:name=".ForumActivity" />
+        <activity android:name=".ProfileActivity" />
 
 
-        <!-- Tela principal (com LAUNCHER) -->
+
+        <!-- Tela HOME (AGORA é a tela inicial) -->
         <activity
-            android:name=".MainActivity"
+            android:name=".HomeActivity"
             android:exported="true">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
 
     </application>
