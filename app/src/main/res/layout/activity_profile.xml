@@ -128,7 +128,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Artigos"
+                            android:text="Artigos lidos"
                             android:textColor="#B0C4DE"
                             android:textSize="12sp" />
                     </LinearLayout>
@@ -196,7 +196,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Conquistas"
+                            android:text="Comentários"
                             android:textColor="#B0C4DE"
                             android:textSize="12sp" />
                     </LinearLayout>
