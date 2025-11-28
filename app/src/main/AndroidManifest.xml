@@ -12,7 +12,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CodaiApp">
 
-
+        <activity android:name=".RecoveryPasswordActivity" />
+        <activity android:name=".ResetPasswordActivity" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".ArticlesActivity" />

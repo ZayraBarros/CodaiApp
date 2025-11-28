@@ -125,6 +125,16 @@
                     android:inputType="textPassword" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <TextView
+                android:id="@+id/tvForgotPassword"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Esqueci minha senha"
+                android:textSize="14sp"
+                android:textColor="#1BB3D7"
+                android:paddingTop="4dp"
+                android:paddingBottom="8dp"/>
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="16dp" />

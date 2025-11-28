@@ -132,4 +132,46 @@ public class UserDAO {
         db.close();
         return user;
     }
+
+    public boolean updatePassword(String email, String novaSenha) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        // Gerar hash da nova senha
+        String novoHash = BCrypt.hashpw(novaSenha, BCrypt.gensalt());
+        values.put(DatabaseHelper.COLUMN_PASSWORD, novoHash);
+
+        String whereClause = DatabaseHelper.COLUMN_EMAIL + " = ?";
+        String[] whereArgs = { email };
+
+        int rowsAffected = db.update(
+                DatabaseHelper.TABLE_USERS,
+                values,
+                whereClause,
+                whereArgs
+        );
+
+        db.close();
+        return rowsAffected > 0;
+    }
+
+    public boolean emailExists(String email) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        // Procuramos apenas o ID para economizar recursos
+        Cursor cursor = db.query(
+                DatabaseHelper.TABLE_USERS,
+                new String[]{DatabaseHelper.COLUMN_ID},
+                DatabaseHelper.COLUMN_EMAIL + " = ?",
+                new String[]{ email },
+                null, null, null
+        );
+
+        boolean exists = cursor.moveToFirst();
+
+        cursor.close();
+        db.close();
+
+        return exists;
+    }
 }
