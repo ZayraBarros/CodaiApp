@@ -1,9 +1,28 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+<!-- No arquivo app/res/values/themes.xml -->
+<resources>
+
+    <!-- SEU TEMA PRINCIPAL PROVAVELMENTE ESTÁ AQUI -->
     <style name="Base.Theme.CodaiApp" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <!-- ... customizações do seu tema principal ... -->
     </style>
 
     <style name="Theme.CodaiApp" parent="Base.Theme.CodaiApp" />
+
+    <!-- =============================================================== -->
+    <!--     ADICIONE O NOVO TEMA DA SPLASH SCREEN AQUI EMBAIXO            -->
+    <!-- =============================================================== -->
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <!-- 1. Defina a cor de fundo da tela de inicialização -->
+        <item name="windowSplashScreenBackground">#020824</item>  <!-- Mude para a cor que desejar -->
+
+        <!-- 2. Aponte para a IMAGEM que você adicionou no Passo 1 -->
+        <!--    Use @drawable/NOME_DO_SEU_ARQUIVO_SEM_EXTENSÃO    -->
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_logo_container</item>
+
+        <!-- 3. Diga ao sistema qual tema usar DEPOIS que a splash screen sumir -->
+        <!--    Deve ser o tema principal do seu App: Theme.CodaiApp        -->
+        <item name="postSplashScreenTheme">@style/Theme.CodaiApp</item>
+    </style>
+
 </resources>
+    
