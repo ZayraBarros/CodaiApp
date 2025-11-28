@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:drawable="@drawable/logo_codai"
+        android:gravity="center">
+
+        <!--
+            AUMENTE este valor para deixar a imagem MENOR.
+            Experimente com 60dp, 80dp, ou 100dp.
+        -->
+        <inset
+            android:insetLeft="180dp"
+            android:insetTop="180dp"
+            android:insetRight="180dp"
+            android:insetBottom="180dp" />
+
+    </item>
+
+</layer-list>
