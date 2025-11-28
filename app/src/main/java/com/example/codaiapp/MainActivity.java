@@ -4,6 +4,8 @@ import android.content.Intent; // <-- ADICIONE ISSO
 import android.os.Bundle;
 import android.widget.TextView; // <-- E ISSO
 
+import androidx.core.splashscreen.SplashScreen;
+
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -16,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SplashScreen.installSplashScreen(this);
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
