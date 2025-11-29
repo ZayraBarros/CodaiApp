@@ -10,6 +10,7 @@
     <string name="app_name">CODAÍ</string>
     <string name="post_author_placeholder">Nome de usuário</string>
     <string name="post_content_placeholder">Este é um exemplo de postagem no fórum. O usuário pode compartilhar suas ideias e experiências aqui.</string>
+    <string name="select_category_prompt">Selecione a categoria</string>
 
 
 
