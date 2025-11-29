@@ -76,7 +76,7 @@ public class CreateArticleActivity extends AppCompatActivity {
         boolean featured = checkFeatured.isChecked();
 
         if (title.isEmpty()) {
-            inputTitle.setError("O título é obrigatório");
+            inputTitle.setError("O título é obrigatório.");
             return;
         }
 
