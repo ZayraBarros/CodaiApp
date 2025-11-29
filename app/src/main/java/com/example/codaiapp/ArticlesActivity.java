@@ -12,6 +12,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Intent;
+import android.widget.Button;
+
+
 public class ArticlesActivity extends AppCompatActivity {
 
     private RecyclerView rvArticles;
@@ -27,6 +31,15 @@ public class ArticlesActivity extends AppCompatActivity {
         rvArticles = findViewById(R.id.rvArticles);
         emptyStateLayout = findViewById(R.id.emptyStateArticlesLayout);
         backButton = findViewById(R.id.backButton);
+
+
+        Button btnWriteArticle = findViewById(R.id.btnWriteArticle);
+
+        btnWriteArticle.setOnClickListener(v -> {
+            Intent intent = new Intent(ArticlesActivity.this, CreateArticleActivity.class);
+            startActivity(intent);
+        });
+
 
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
