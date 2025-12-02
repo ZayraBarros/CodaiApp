@@ -96,6 +96,22 @@
                         android:text="#Python"
                         android:checkable="true" />
 
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipCss"
+                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="#CSS"
+                        android:checkable="true" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipKotlin"
+                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="#Kotlin"
+                        android:checkable="true" />
+
                 </com.google.android.material.chip.ChipGroup>
             </HorizontalScrollView>
 
