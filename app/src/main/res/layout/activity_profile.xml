@@ -246,6 +246,17 @@
                 android:textColor="@android:color/white" />
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnChangePassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Alterar senha"
+                android:textAllCaps="false"
+                app:cornerRadius="24dp"
+                app:backgroundTint="#1BB3D7"
+                android:textColor="@android:color/white" />
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnLogout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

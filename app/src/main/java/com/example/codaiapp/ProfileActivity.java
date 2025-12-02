@@ -19,6 +19,8 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView tvUserName, tvUserEmail, tvUserRole, tvUserBio;
     private TextView tvArticlesCount, tvPostsCount, tvCommentsCount;
     private MaterialButton btnEditProfile, btnLogout;
+    private MaterialButton btnChangePassword;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,11 +56,20 @@ public class ProfileActivity extends AppCompatActivity {
 
         btnEditProfile = findViewById(R.id.btnEditProfile);
         btnLogout = findViewById(R.id.btnLogout);
+        btnChangePassword = findViewById(R.id.btnChangePassword);
 
         loadProfileData();
 
         btnEditProfile.setOnClickListener(v -> {
             Intent intent = new Intent(ProfileActivity.this, EditProfileActivity.class);
+            startActivity(intent);
+        });
+
+        btnChangePassword.setOnClickListener(v -> {
+            String email = sessionManager.getUserEmail();
+
+            Intent intent = new Intent(ProfileActivity.this, ResetPasswordActivity.class);
+            intent.putExtra("email", email);
             startActivity(intent);
         });
 
