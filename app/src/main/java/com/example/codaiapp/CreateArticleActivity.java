@@ -1,4 +1,3 @@
-
 package com.example.codaiapp;
 
 import android.content.Intent;
@@ -13,6 +12,13 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.codaiapp.dao.ArticleDAO;
+import com.example.codaiapp.model.Article;
+import com.example.codaiapp.utils.SessionManager;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class CreateArticleActivity extends AppCompatActivity {
 
     private EditText inputTitle, inputExcerpt, inputReadTime, inputContent;
@@ -20,16 +26,23 @@ public class CreateArticleActivity extends AppCompatActivity {
     private CheckBox checkFeatured;
     private Button btnSubmit, btnCancel;
 
+    // Novas dependências
+    private ArticleDAO articleDAO;
+    private SessionManager sessionManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_article);
 
+        // Inicializa as dependências
+        articleDAO = new ArticleDAO(this);
+        sessionManager = new SessionManager(this);
+
         initComponents();
         setupCategorySpinner();
 
         btnCancel.setOnClickListener(v -> finish());
-
         btnSubmit.setOnClickListener(v -> handleSubmit());
     }
 
@@ -91,38 +104,53 @@ public class CreateArticleActivity extends AppCompatActivity {
             return;
         }
 
-        // ❗ Valida a categoria
         if (category.equals("Selecione a categoria")) {
             Toast.makeText(this, "Por favor, escolha uma categoria.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // 🔥 Adiciona o hashtag
+        // --- 1. Preparar Dados Dinâmicos ---
+
+        // Obter nome do autor logado
+        String authorName = sessionManager.getUserName();
+        if (authorName.equals("Visitante")) {
+            Toast.makeText(this, "Erro: Faça login para postar.", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        // Obter data formatada (ex: dd/MM/yyyy)
+        String currentDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
+
+        // Adicionar o hashtag
         category = "#" + category;
 
         int readTime = Integer.parseInt(readTimeStr);
 
-        // 🔥 Simulando criação de artigo
+        // --- 2. Criar Objeto e Salvar no DB ---
         Article newArticle = new Article(
                 title,
                 excerpt,
-                "Você", // autor fixo
-                "Hoje", // data temporária
+                content, // <<< CONTEÚDO ADICIONADO AQUI
+                authorName,
+                currentDate,
                 category,
                 readTime,
-                0,
+                0, // viewCount inicial
                 featured
         );
 
-        // Resultado enviado de volta
-        Intent resultIntent = new Intent();
-        resultIntent.putExtra("title", title);
-        resultIntent.putExtra("excerpt", excerpt);
-        resultIntent.putExtra("readTime", readTime);
-        resultIntent.putExtra("category", category);
-        resultIntent.putExtra("featured", featured);
+        boolean success = articleDAO.insertArticle(newArticle);
 
-        setResult(RESULT_OK, resultIntent);
-        finish();
+        // --- 3. Finalizar e Retornar ---
+
+        if (success) {
+            Toast.makeText(this, "Artigo criado com sucesso!", Toast.LENGTH_SHORT).show();
+
+            // Retorna RESULT_OK para que ArticlesActivity recarregue a lista do banco
+            setResult(RESULT_OK);
+            finish();
+        } else {
+            Toast.makeText(this, "Falha ao salvar o artigo no banco de dados.", Toast.LENGTH_LONG).show();
+        }
     }
 }

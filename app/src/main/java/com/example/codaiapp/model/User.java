@@ -1,7 +1,9 @@
 package com.example.codaiapp.model;
 
 public class User {
-    private int id;
+
+    // Mudança de 'int' para 'long' para maior compatibilidade com IDs de banco de dados
+    private long id;
     private String nome;
     private String email;
     private String senha;
@@ -23,8 +25,9 @@ public class User {
         this.commentsCount = 0;
     }
 
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    // Getters e Setters atualizados para 'long'
+    public long getId() { return id; }
+    public void setId(long id) { this.id = id; }
 
     public String getNome() { return nome; }
     public void setNome(String nome) { this.nome = nome; }

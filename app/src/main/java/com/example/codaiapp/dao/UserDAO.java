@@ -137,7 +137,6 @@ public class UserDAO {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
 
-        // Gerar hash da nova senha
         String novoHash = BCrypt.hashpw(novaSenha, BCrypt.gensalt());
         values.put(DatabaseHelper.COLUMN_PASSWORD, novoHash);
 
@@ -158,7 +157,6 @@ public class UserDAO {
     public boolean emailExists(String email) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        // Procuramos apenas o ID para economizar recursos
         Cursor cursor = db.query(
                 DatabaseHelper.TABLE_USERS,
                 new String[]{DatabaseHelper.COLUMN_ID},
@@ -173,5 +171,31 @@ public class UserDAO {
         db.close();
 
         return exists;
+    }
+
+    // NOVO MÉTODO ADICIONADO PARA BUSCAR O NOME POR ID
+    public String getUserNameById(long userId) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String userName = null;
+
+        String[] columns = {DatabaseHelper.COLUMN_NOME};
+        String selection = DatabaseHelper.COLUMN_ID + " = ?";
+        String[] selectionArgs = {String.valueOf(userId)};
+
+        Cursor cursor = db.query(
+                DatabaseHelper.TABLE_USERS,
+                columns,
+                selection,
+                selectionArgs,
+                null, null, null
+        );
+
+        if (cursor.moveToFirst()) {
+            userName = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_NOME));
+        }
+
+        cursor.close();
+        db.close();
+        return userName;
     }
 }

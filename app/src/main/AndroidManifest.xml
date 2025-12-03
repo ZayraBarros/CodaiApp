@@ -11,18 +11,31 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CodaiApp">
+
+        <activity android:name=".ArticleDetailActivity" />
         <activity android:name=".CreateArticleActivity" />
+        <activity android:name=".ArticlesActivity" />
+
+        <activity
+            android:name=".CreatePostActivity"
+            android:exported="false"
+            android:label="Criar Postagem no Fórum"
+            android:theme="@style/Theme.AppCompat.Light" />
+        <activity android:name=".ForumActivity" />
+
+        <activity android:name=".PostDetailActivity"
+            android:exported="false"
+            android:label="Detalhes da Postagem" />
+
 
         <activity android:name=".RecoveryPasswordActivity" />
         <activity android:name=".ResetPasswordActivity" />
         <activity android:name=".LoginActivity" />
-        <activity android:name=".HomeActivity"  android:exported="false" />
-        <activity android:name=".ArticlesActivity" />
-        <activity android:name=".ForumActivity" />
+        <activity android:name=".RegisterActivity" />
         <activity android:name=".ProfileActivity" />
         <activity android:name=".EditProfileActivity" />
 
-        <activity android:name=".RegisterActivity" />
+        <activity android:name=".HomeActivity"  android:exported="false" />
 
 
         <activity

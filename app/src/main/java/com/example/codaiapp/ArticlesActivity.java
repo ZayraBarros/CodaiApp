@@ -11,25 +11,36 @@ import java.util.ArrayList;
 import java.util.List;
 import android.content.Intent;
 import android.widget.Button;
+
+import com.example.codaiapp.dao.ArticleDAO;
+import com.example.codaiapp.model.Article;
 import com.google.android.material.chip.Chip;
 
-public class ArticlesActivity extends AppCompatActivity {
+// 1. Implementa a interface de clique do Adapter
+public class ArticlesActivity extends AppCompatActivity
+        implements ArticleAdapter.OnArticleClickListener {
 
     private RecyclerView rvArticles;
-    private List<Article> allArticles; // Lista completa
-    private List<Article> filteredArticles; // Lista filtrada
+    private List<Article> allArticles;
+    private List<Article> filteredArticles;
     private LinearLayout emptyStateLayout;
     private ImageButton backButton;
     private ArticleAdapter articleAdapter;
 
-    // Chips de filtro
+    private ArticleDAO articleDAO;
+
     private Chip chipAll, chipPython, chipUIUX;
     private String selectedCategory = "Todos";
+
+    // Constante para a chave do Intent
+    public static final String EXTRA_ARTICLE_ID = "extra_article_id";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_articles);
+
+        articleDAO = new ArticleDAO(this);
 
         // Inicializar views
         rvArticles = findViewById(R.id.rvArticles);
@@ -52,10 +63,8 @@ public class ArticlesActivity extends AppCompatActivity {
 
         setupRecyclerView();
         loadArticles();
-        filterByCategory("Todos");
         setupFilterChips();
 
-        // Aplicar filtro inicial (Todos)
         filterByCategory("Todos");
     }
 
@@ -67,21 +76,24 @@ public class ArticlesActivity extends AppCompatActivity {
         if (allArticles == null) {
             allArticles = new ArrayList<>();
         }
-
         if (filteredArticles == null) {
             filteredArticles = new ArrayList<>();
         }
 
+        // 2. Inicializa o Adapter, passando 'this' como o listener
         if (articleAdapter == null) {
-            articleAdapter = new ArticleAdapter(filteredArticles);
+            articleAdapter = new ArticleAdapter(filteredArticles, this);
             rvArticles.setAdapter(articleAdapter);
         }
 
-        // recarregar lista atual para o filtro funcionar
-        filteredArticles.clear();
-        filteredArticles.addAll(allArticles);
-        articleAdapter.notifyDataSetChanged();
+        allArticles.clear();
+        allArticles.addAll(loadArticlesFromDatabase());
     }
+
+    private List<Article> loadArticlesFromDatabase() {
+        return articleDAO.getAllArticles();
+    }
+
 
     private void setupFilterChips() {
         chipAll.setOnClickListener(v -> filterByCategory("Todos"));
@@ -94,12 +106,9 @@ public class ArticlesActivity extends AppCompatActivity {
         filteredArticles.clear();
 
         if (category.equals("Todos")) {
-            // Mostrar todos os artigos
             filteredArticles.addAll(allArticles);
         } else {
-            // Filtrar artigos pela categoria
             for (Article article : allArticles) {
-                // Comparar com a categoria do artigo (remove # se necessário)
                 String articleCategory = article.getCategory().replace("#", "");
                 if (articleCategory.equals(category)) {
                     filteredArticles.add(article);
@@ -107,23 +116,16 @@ public class ArticlesActivity extends AppCompatActivity {
             }
         }
 
-        // Atualizar RecyclerView
         articleAdapter.notifyDataSetChanged();
-
-        // Atualizar estado visual dos chips
         updateChipStates();
-
-        // Verificar estado vazio
         checkEmptyState();
     }
 
     private void updateChipStates() {
-        // Remover seleção de todos
         chipAll.setChecked(false);
         chipPython.setChecked(false);
         chipUIUX.setChecked(false);
 
-        // Marcar o chip selecionado
         switch (selectedCategory) {
             case "Todos":
                 chipAll.setChecked(true);
@@ -150,8 +152,8 @@ public class ArticlesActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        loadArticles();            // Recarrega tudo do banco
-        filterByCategory(selectedCategory);  // Depois aplica o filtro
+        loadArticles();
+        filterByCategory(selectedCategory);
     }
 
     @Override
@@ -159,26 +161,17 @@ public class ArticlesActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == 1001 && resultCode == RESULT_OK) {
-
-            String title = data.getStringExtra("title");
-            String excerpt = data.getStringExtra("excerpt");
-            int readTime = data.getIntExtra("readTime", 0);
-            String category = data.getStringExtra("category");
-            boolean featured = data.getBooleanExtra("featured", false);
-
-            Article newArticle = new Article(
-                    title,
-                    excerpt,
-                    "Você",
-                    "Hoje",
-                    category,
-                    readTime,
-                    0,
-                    featured
-            );
-
-            allArticles.add(0, newArticle);   // adiciona no início da lista
-            filterByCategory(selectedCategory); // atualiza filtro atual
+            loadArticles();
+            filterByCategory(selectedCategory);
         }
+    }
+
+    // 3. Implementação do método da interface OnArticleClickListener
+    @Override
+    public void onArticleClick(long articleId) {
+        // Inicia a nova Activity de detalhes, passando o ID do artigo clicado
+        Intent intent = new Intent(ArticlesActivity.this, ArticleDetailActivity.class);
+        intent.putExtra(EXTRA_ARTICLE_ID, articleId);
+        startActivity(intent);
     }
 }

@@ -93,7 +93,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
         if (success) {
             // Se o nome foi alterado, atualiza a sessão para que o nome no Menu/Home mude
-            sessionManager.createLoginSession(newName, currentUser.getEmail());
+            sessionManager.createLoginSession(currentUser.getId(), newName, currentUser.getEmail());
 
             Toast.makeText(this, "Perfil atualizado com sucesso!", Toast.LENGTH_SHORT).show();
             finish();

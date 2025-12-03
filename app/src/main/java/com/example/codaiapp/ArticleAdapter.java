@@ -6,14 +6,26 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.codaiapp.model.Article;
+
 import java.util.List;
 
 public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleViewHolder> {
 
     private List<Article> articles;
+    // 1. Definição da Interface de Clique
+    private OnArticleClickListener listener;
 
-    public ArticleAdapter(List<Article> articles) {
+    // Interface para comunicação de clique
+    public interface OnArticleClickListener {
+        void onArticleClick(long articleId);
+    }
+
+    // 2. Construtor com Listener
+    public ArticleAdapter(List<Article> articles, OnArticleClickListener listener) {
         this.articles = articles;
+        this.listener = listener;
     }
 
     @NonNull
@@ -39,6 +51,14 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleV
         } else {
             // TODO: Remover estilo de destaque
         }
+
+        // 3. Implementação do Clique no Item
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                // Passamos o ID do artigo, que o ArticleDetailActivity usará para buscar o conteúdo
+                listener.onArticleClick(article.getId());
+            }
+        });
     }
 
     @Override

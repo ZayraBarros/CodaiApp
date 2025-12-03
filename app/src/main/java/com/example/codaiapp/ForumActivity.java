@@ -1,24 +1,41 @@
 package com.example.codaiapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Toast;
+
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.codaiapp.dao.ForumDAO;
+import com.example.codaiapp.model.Post; // <-- USANDO POST
+
 import java.util.ArrayList;
 import java.util.List;
+
 import com.google.android.material.chip.Chip;
 
-public class ForumActivity extends AppCompatActivity {
+public class ForumActivity extends AppCompatActivity
+        implements PostAdapter.OnPostClickListener {
+
+    private static final int REQUEST_CODE_CREATE_POST = 2001;
+    public static final String EXTRA_POST_ID = "extra_post_id";
 
     private RecyclerView rvPosts;
-    private List<Post> allPosts; // Lista completa
-    private List<Post> filteredPosts; // Lista filtrada
+    private PostAdapter postAdapter;
+    private ForumDAO forumDAO;
+    private Button btnCreatePost;
+
+    private List<Post> allPosts; // <-- USANDO POST
+    private List<Post> filteredPosts; // <-- USANDO POST
     private LinearLayout emptyStateLayout;
     private ImageButton backButton;
-    private PostAdapter postAdapter;
 
     // Chips de filtro
     private Chip chipAll, chipPython, chipCSS, chipKotlin;
@@ -29,67 +46,61 @@ public class ForumActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forum);
 
-        // Inicializar views
+        forumDAO = new ForumDAO(this);
+
+        initComponents();
+        setupRecyclerView();
+        setupFilterChips();
+
+        backButton.setOnClickListener(v -> finish());
+
+        btnCreatePost.setOnClickListener(v -> {
+            // Certifique-se que o nome da classe é CreateForumPostActivity (ou CreatePostActivity se você o renomeou)
+            Intent intent = new Intent(ForumActivity.this, CreatePostActivity.class);
+            startActivityForResult(intent, REQUEST_CODE_CREATE_POST);
+        });
+
+        loadPosts();
+        filterByCategory(selectedCategory);
+    }
+
+    private void initComponents() {
         rvPosts = findViewById(R.id.rvPosts);
         emptyStateLayout = findViewById(R.id.emptyStateLayout);
         backButton = findViewById(R.id.backButton);
+        btnCreatePost = findViewById(R.id.btnCreatePost);
 
-        // Inicializar chips de filtro
         chipAll = findViewById(R.id.chipAll);
         chipPython = findViewById(R.id.chipPython);
         chipCSS = findViewById(R.id.chipCss);
         chipKotlin = findViewById(R.id.chipKotlin);
-
-        // Configurar listener do botão voltar
-        backButton.setOnClickListener(v -> finish());
-
-        setupRecyclerView();
-        loadPosts();
-        setupFilterChips();
-
-        // Aplicar filtro inicial (Todos)
-        filterByCategory("Todos");
     }
 
     private void setupRecyclerView() {
         rvPosts.setLayoutManager(new LinearLayoutManager(this));
-    }
 
-    private void loadPosts() {
         allPosts = new ArrayList<>();
         filteredPosts = new ArrayList<>();
 
-        // Adicionar posts de exemplo com categorias
-        allPosts.add(new Post("Dúvida com Loop em Python",
-                "Estou com dificuldades para entender como usar o loop 'for' com dicionários.",
-                "Ana", "2 min atrás", "#Python", 5));
-
-        allPosts.add(new Post("Como centralizar uma div?",
-                "Qual é a forma mais moderna e eficiente de centralizar uma div com CSS?",
-                "Carlos", "15 min atrás", "#CSS", 12));
-
-        Post highlightedPost = new Post("Melhores práticas em Kotlin",
-                "Discussão sobre as melhores práticas para desenvolvimento Android com Kotlin.",
-                "Mariana", "1 hora atrás", "#Kotlin", 28);
-        highlightedPost.setHighlighted(true);
-        allPosts.add(highlightedPost);
-
-        allPosts.add(new Post("Python para Data Science",
-                "Quais bibliotecas Python são essenciais para começar em Data Science?",
-                "Pedro", "2 horas atrás", "#Python", 18));
-
-        allPosts.add(new Post("Flexbox vs Grid CSS",
-                "Quando devo usar Flexbox e quando devo usar CSS Grid?",
-                "Julia", "3 horas atrás", "#CSS", 22));
-
-        allPosts.add(new Post("Coroutines no Kotlin",
-                "Como funcionam as coroutines e quando usá-las?",
-                "Lucas", "4 horas atrás", "#Kotlin", 15));
-
-        // Inicializar adapter
-        postAdapter = new PostAdapter(filteredPosts);
+        postAdapter = new PostAdapter(filteredPosts, this);
         rvPosts.setAdapter(postAdapter);
     }
+
+    private void loadPosts() {
+        allPosts.clear();
+        allPosts.addAll(forumDAO.getAllPosts());
+
+        if (allPosts.isEmpty()) {
+            addMockData();
+        }
+    }
+
+    private void addMockData() {
+        // <-- USANDO POST
+        allPosts.add(new Post("Dúvida Loop", "...", "Ana", "2 min atrás", "Python", 5));
+        allPosts.add(new Post("Centralizar div", "...", "Carlos", "15 min atrás", "CSS", 12));
+    }
+
 
     private void setupFilterChips() {
         chipAll.setOnClickListener(v -> filterByCategory("Todos"));
@@ -103,12 +114,9 @@ public class ForumActivity extends AppCompatActivity {
         filteredPosts.clear();
 
         if (category.equals("Todos")) {
-            // Mostrar todos os posts
             filteredPosts.addAll(allPosts);
         } else {
-            // Filtrar posts pela categoria
-            for (Post post : allPosts) {
-                // Comparar com a categoria do post (remove # se necessário)
+            for (Post post : allPosts) { // <-- USANDO POST
                 String postCategory = post.getCategory().replace("#", "");
                 if (postCategory.equals(category)) {
                     filteredPosts.add(post);
@@ -116,38 +124,16 @@ public class ForumActivity extends AppCompatActivity {
             }
         }
 
-        // Atualizar RecyclerView
         postAdapter.notifyDataSetChanged();
-
-        // Atualizar estado visual dos chips
         updateChipStates();
-
-        // Verificar estado vazio
         checkEmptyState();
     }
 
     private void updateChipStates() {
-        // Remover seleção de todos
-        chipAll.setChecked(false);
-        chipPython.setChecked(false);
-        chipCSS.setChecked(false);
-        chipKotlin.setChecked(false);
-
-        // Marcar o chip selecionado
-        switch (selectedCategory) {
-            case "Todos":
-                chipAll.setChecked(true);
-                break;
-            case "Python":
-                chipPython.setChecked(true);
-                break;
-            case "CSS":
-                chipCSS.setChecked(true);
-                break;
-            case "Kotlin":
-                chipKotlin.setChecked(true);
-                break;
-        }
+        chipAll.setChecked(selectedCategory.equals("Todos"));
+        chipPython.setChecked(selectedCategory.equals("Python"));
+        chipCSS.setChecked(selectedCategory.equals("CSS"));
+        chipKotlin.setChecked(selectedCategory.equals("Kotlin"));
     }
 
     private void checkEmptyState() {
@@ -161,10 +147,27 @@ public class ForumActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onPostClick(long postId) {
+        Intent intent = new Intent(ForumActivity.this, PostDetailActivity.class);
+        intent.putExtra(EXTRA_POST_ID, postId);
+        startActivity(intent);
+    }
+
+
+    @Override
     protected void onResume() {
         super.onResume();
-        // Recarregar posts quando voltar para a activity
         loadPosts();
         filterByCategory(selectedCategory);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_CODE_CREATE_POST && resultCode == RESULT_OK) {
+            loadPosts();
+            filterByCategory(selectedCategory);
+        }
     }
 }

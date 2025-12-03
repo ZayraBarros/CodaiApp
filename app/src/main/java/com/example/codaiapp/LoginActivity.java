@@ -80,7 +80,7 @@ public class LoginActivity extends AppCompatActivity {
 
         if (loggedInUser != null) {
             SessionManager session = new SessionManager(this);
-            session.createLoginSession(loggedInUser.getNome(), loggedInUser.getEmail());
+            session.createLoginSession(loggedInUser.getId(), loggedInUser.getNome(), loggedInUser.getEmail());
             Toast.makeText(this, "Bem-vindo(a), " + loggedInUser.getNome() + "!", Toast.LENGTH_LONG).show();
             Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

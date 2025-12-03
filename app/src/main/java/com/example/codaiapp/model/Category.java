@@ -1,4 +1,4 @@
-package com.example.codaiapp;
+package com.example.codaiapp.model;
 
 public class Category {
     private String name;

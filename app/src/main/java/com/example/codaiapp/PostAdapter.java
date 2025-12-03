@@ -6,14 +6,26 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+// Import corrigido para o modelo ForumPost (é crucial que o modelo tenha este nome)
+import com.example.codaiapp.model.Post;
+
 import java.util.List;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
 
-    private List<Post> posts;
+    private final List<Post> posts; // Usando ForumPost para consistência de dados
+    private final OnPostClickListener listener; // NOVO: Listener de clique
 
-    public PostAdapter(List<Post> posts) {
+    // 1. Definição da Interface de Clique
+    public interface OnPostClickListener {
+        void onPostClick(long postId);
+    }
+
+    // 2. Construtor com Listener
+    public PostAdapter(List<Post> posts, OnPostClickListener listener) {
         this.posts = posts;
+        this.listener = listener;
     }
 
     @NonNull
@@ -26,19 +38,27 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     @Override
     public void onBindViewHolder(@NonNull PostViewHolder holder, int position) {
         Post post = posts.get(position);
+
         holder.tvPostTitle.setText(post.getTitle());
         holder.tvPostContent.setText(post.getContent());
         holder.tvCategoryTag.setText(post.getCategory());
         holder.tvAuthor.setText(post.getAuthor());
         holder.tvDate.setText(post.getDate());
-        holder.tvComments.setText(String.format("%d comentário(s)", post.getCommentCount()));
+
+        // Assumindo que você usará getReplyCount ou renomeou getCommentCount no modelo
+        holder.tvComments.setText(String.format("%d resposta(s)", post.getReplyCount()));
 
         // Lógica de destaque
         if (post.isHighlighted()) {
-            // TODO: Adicionar estilo de destaque (ex: mudar cor de fundo do card)
-        } else {
-            // TODO: Remover estilo de destaque
+            // TODO: Adicionar estilo de destaque
         }
+
+        // 3. Implementação do Clique (usa o ID do post)
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onPostClick(post.getId());
+            }
+        });
     }
 
     @Override
