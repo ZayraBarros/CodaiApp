@@ -1,6 +1,7 @@
 
 package com.example.codaiapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -88,8 +89,16 @@ public class CreateArticleActivity extends AppCompatActivity {
         if (content.isEmpty()) {
             inputContent.setError("Escreva o conteúdo do artigo");
             return;
-
         }
+
+        // ❗ Valida a categoria
+        if (category.equals("Selecione a categoria")) {
+            Toast.makeText(this, "Por favor, escolha uma categoria.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // 🔥 Adiciona o hashtag
+        category = "#" + category;
 
         int readTime = Integer.parseInt(readTimeStr);
 
@@ -97,18 +106,23 @@ public class CreateArticleActivity extends AppCompatActivity {
         Article newArticle = new Article(
                 title,
                 excerpt,
-                "Você",                  // autor fixo por enquanto
-                "Hoje",                  // data simulada
+                "Você", // autor fixo
+                "Hoje", // data temporária
                 category,
                 readTime,
-                0,                       // views começam em 0
+                0,
                 featured
         );
 
-        // Apenas retornamos para a tela anterior.
-        Toast.makeText(this, "Artigo criado com sucesso!", Toast.LENGTH_SHORT).show();
+        // Resultado enviado de volta
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra("title", title);
+        resultIntent.putExtra("excerpt", excerpt);
+        resultIntent.putExtra("readTime", readTime);
+        resultIntent.putExtra("category", category);
+        resultIntent.putExtra("featured", featured);
 
-        // Enviar o artigo de volta para a lista futuramente
+        setResult(RESULT_OK, resultIntent);
         finish();
     }
 }

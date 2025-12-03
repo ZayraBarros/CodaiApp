@@ -45,13 +45,14 @@ public class ArticlesActivity extends AppCompatActivity {
         // Configurar listeners
         btnWriteArticle.setOnClickListener(v -> {
             Intent intent = new Intent(ArticlesActivity.this, CreateArticleActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent, 1001);
         });
 
         backButton.setOnClickListener(v -> finish());
 
         setupRecyclerView();
         loadArticles();
+        filterByCategory("Todos");
         setupFilterChips();
 
         // Aplicar filtro inicial (Todos)
@@ -63,31 +64,23 @@ public class ArticlesActivity extends AppCompatActivity {
     }
 
     private void loadArticles() {
-        allArticles = new ArrayList<>();
-        filteredArticles = new ArrayList<>();
+        if (allArticles == null) {
+            allArticles = new ArrayList<>();
+        }
 
-        // Adicione artigos com as categorias corretas
-        allArticles.add(new Article("Intro a Python", "Aprenda os conceitos básicos...",
-                "Leo", "Ontem", "#Python", 5, 150, false));
+        if (filteredArticles == null) {
+            filteredArticles = new ArrayList<>();
+        }
 
-        allArticles.add(new Article("Design Systems", "Como criar um design system do zero...",
-                "Sofia", "2 dias atrás", "#UI/UX", 10, 450, true));
+        if (articleAdapter == null) {
+            articleAdapter = new ArticleAdapter(filteredArticles);
+            rvArticles.setAdapter(articleAdapter);
+        }
 
-        allArticles.add(new Article("Flexbox vs Grid", "Quando usar Flexbox e quando usar Grid no CSS.",
-                "Miguel", "3 dias atrás", "#CSS", 8, 320, false));
-
-        allArticles.add(new Article("State Management", "Gerenciamento de estado em apps modernos.",
-                "Julia", "4 dias atrás", "#Kotlin", 12, 600, false));
-
-        allArticles.add(new Article("Python Avançado", "Decorators e generators em Python.",
-                "Carlos", "5 dias atrás", "#Python", 15, 800, false));
-
-        allArticles.add(new Article("UI Design Trends", "Tendências de design para 2024.",
-                "Ana", "1 semana atrás", "#UI/UX", 20, 950, false));
-
-        // Inicializar adapter
-        articleAdapter = new ArticleAdapter(filteredArticles);
-        rvArticles.setAdapter(articleAdapter);
+        // recarregar lista atual para o filtro funcionar
+        filteredArticles.clear();
+        filteredArticles.addAll(allArticles);
+        articleAdapter.notifyDataSetChanged();
     }
 
     private void setupFilterChips() {
@@ -157,8 +150,35 @@ public class ArticlesActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        // Recarregar artigos quando voltar para a activity
-        loadArticles();
-        filterByCategory(selectedCategory);
+        loadArticles();            // Recarrega tudo do banco
+        filterByCategory(selectedCategory);  // Depois aplica o filtro
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 1001 && resultCode == RESULT_OK) {
+
+            String title = data.getStringExtra("title");
+            String excerpt = data.getStringExtra("excerpt");
+            int readTime = data.getIntExtra("readTime", 0);
+            String category = data.getStringExtra("category");
+            boolean featured = data.getBooleanExtra("featured", false);
+
+            Article newArticle = new Article(
+                    title,
+                    excerpt,
+                    "Você",
+                    "Hoje",
+                    category,
+                    readTime,
+                    0,
+                    featured
+            );
+
+            allArticles.add(0, newArticle);   // adiciona no início da lista
+            filterByCategory(selectedCategory); // atualiza filtro atual
+        }
     }
 }
